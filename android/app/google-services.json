@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1027507063058",
+    "project_id": "myfinances-cba1a",
+    "storage_bucket": "myfinances-cba1a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027507063058:android:70efb070516aff9cbf8bcb",
+        "android_client_info": {
+          "package_name": "com.finances"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027507063058-hrimvb3c5p38lci9utaedft4gm2pbkbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpINsu7hRqL0NvLExmFeEWggCo3WQwqZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027507063058-hrimvb3c5p38lci9utaedft4gm2pbkbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
