@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
+import { TransactionsItem } from "../Components/Transactions/TransactionItem";
 import { PropsTransaction } from "../Home";
 import { Header } from "../Components/Header";
 import { Typograph } from "../Components/Commom";
 import { Card } from "./components/Card";
 import { SPACERITEM, WIDTHITEM } from "./styles";
-import { Animated, View } from "react-native";
+import { Animated, FlatList, View } from "react-native";
 
 const FILTERED = [
   {
@@ -38,6 +39,11 @@ export const Analytics: React.FC = () => {
   const [transactions, setTransactions] = useState<PropsTransaction[]>([]);
   const [monthFiltered, setMonthFiltered] = useState<PropsMonth[] | []>([]);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const [currenIndex, setCurrentIndex] = useState(0);
+  const [transactionsToIndex, setTransactionsToIndex] = useState<
+    PropsTransaction[]
+  >([]);
+
   useEffect(() => {
     if (transactions.length < 1) return;
     let arr = [] as PropsMonth[];
@@ -81,6 +87,7 @@ export const Analytics: React.FC = () => {
       arr.splice(0, 0, { key: "left" });
       arr.splice(arr.length, 0, { key: "right" });
       setMonthFiltered(arr);
+      setCurrentIndex(1);
     }
   }, [transactions]);
 
@@ -103,6 +110,13 @@ export const Analytics: React.FC = () => {
       });
     return () => subscribe();
   }, []);
+
+  useEffect(() => {
+    if (monthFiltered.length < 1) return;
+    console.log(currenIndex);
+    const filtered = monthFiltered[currenIndex].transactions;
+    setTransactionsToIndex(filtered);
+  }, [currenIndex, monthFiltered]);
 
   return (
     <>
@@ -173,10 +187,28 @@ export const Analytics: React.FC = () => {
         contentContainerStyle={{
           marginVertical: 5,
         }}
-        style={{ maxHeight: 210 }}
         snapToInterval={WIDTHITEM}
         decelerationRate={0}
+        style={{ maxHeight: 210 }}
+        onMomentumScrollEnd={(event) => {
+          const index = Math.floor(
+            event.nativeEvent.contentOffset.x / WIDTHITEM
+          );
+          if (index + 1 === currenIndex) return;
+          setCurrentIndex(index + 1);
+        }}
       />
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={transactionsToIndex}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TransactionsItem selected={() => {}} item={item} />
+          )}
+          contentContainerStyle={{ paddingBottom: 60 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     </>
   );
 };

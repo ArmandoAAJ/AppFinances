@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import { Dimensions, Animated } from "react-native";
-const { width } = Dimensions.get("window");
+export const { width } = Dimensions.get("window");
 export const SPACING = 6;
 export const WIDTHITEM = width * 0.8;
 export const SPACERITEM = (width - WIDTHITEM) / 2;
