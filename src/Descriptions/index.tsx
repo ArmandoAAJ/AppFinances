@@ -119,14 +119,14 @@ export const Descriptions: React.FC = () => {
               borderBottomColor: '#778899',
               fontSize: 16,
               width: '78%',
-              height: 45,
+              height: 50,
             }}
             autoCapitalize="characters"
             autoCorrect={false}
             onChangeText={value => setText(value.toUpperCase())}
             value={text}
             autoFocus={true}
-            placeholder="Digite aqui sua despesa ou receita"
+            placeholder="Digite a descrição"
           />
           <Button
             disabled={text.length < 1}
