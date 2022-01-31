@@ -1,7 +1,7 @@
-import React from 'react';
-import {FlatList} from 'react-native';
-import {PropsTransaction} from '../../Home';
-import {TransactionsItem} from './TransactionItem';
+import React from "react";
+import { FlatList } from "react-native";
+import { PropsTransaction } from "../../Home";
+import { TransactionsItem } from "./TransactionItem";
 
 interface PropsTransactionsList {
   data: PropsTransaction[];
@@ -18,14 +18,17 @@ export const TransactionsList: React.FC<PropsTransactionsList> = ({
   return (
     <FlatList
       data={data}
-      keyExtractor={item => item.id}
-      renderItem={({item}) => (
-        <TransactionsItem
-          item={item}
-          selected={() => handleSelectedItem(item)}
-        />
-      )}
-      contentContainerStyle={{paddingBottom: 70}}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item, index }) => {
+        if (index > 9) return <></>;
+        return (
+          <TransactionsItem
+            item={item}
+            selected={() => handleSelectedItem(item)}
+          />
+        );
+      }}
+      contentContainerStyle={{ paddingBottom: 70 }}
     />
   );
 };
