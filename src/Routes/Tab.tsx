@@ -1,10 +1,11 @@
-import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/Ionicons';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Icon from "react-native-vector-icons/Ionicons";
 const Tab = createBottomTabNavigator();
 
-import {HomeScreen} from '../Home';
-import {Descriptions} from '../Descriptions';
+import { HomeScreen } from "../Home";
+import { Descriptions } from "../Descriptions";
+import { Analytics } from "../Analytics";
 
 export const MyTab = () => {
   return (
@@ -13,25 +14,40 @@ export const MyTab = () => {
         headerShown: false,
         tabBarStyle: {
           borderRadius: 50,
-          position: 'absolute',
+          position: "absolute",
           right: 10,
           left: 10,
           bottom: 10,
           elevation: 1,
           borderTopWidth: 0,
-          backgroundColor: '#eeeeee',
+          backgroundColor: "#eeeeee",
         },
-      }}>
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={() => ({
           tabBarShowLabel: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="home-outline"
               size={focused ? 30 : 25}
-              color={focused ? '#E64924' : '#6D6D6D'}
+              color={focused ? "#E64924" : "#6D6D6D"}
+            />
+          ),
+        })}
+      />
+      <Tab.Screen
+        name="Analytics"
+        component={Analytics}
+        options={() => ({
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="analytics"
+              size={focused ? 30 : 25}
+              color={focused ? "#E64924" : "#6D6D6D"}
             />
           ),
         })}
@@ -41,11 +57,11 @@ export const MyTab = () => {
         component={Descriptions}
         options={() => ({
           tabBarShowLabel: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="list"
               size={focused ? 30 : 25}
-              color={focused ? '#E64924' : '#6D6D6D'}
+              color={focused ? "#E64924" : "#6D6D6D"}
             />
           ),
         })}
