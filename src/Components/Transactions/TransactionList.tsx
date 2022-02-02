@@ -20,7 +20,6 @@ export const TransactionsList: React.FC<PropsTransactionsList> = ({
       data={data}
       keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => {
-        if (index > 9) return <></>;
         return (
           <TransactionsItem
             item={item}
