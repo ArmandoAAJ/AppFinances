@@ -1,19 +1,20 @@
-import React, {useState} from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {Typograph} from '../../Components/Commom';
-import {Header} from '../../Components/Header';
-import {RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../Routes/Screen';
-import firestore from '@react-native-firebase/firestore';
+import React, { useState } from "react";
+import Icon from "react-native-vector-icons/Ionicons";
+import IconF from "react-native-vector-icons/FontAwesome5";
+import { Typograph } from "../../Components/Commom";
+import { Header } from "../../Components/Header";
+import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../Routes/Screen";
+import firestore from "@react-native-firebase/firestore";
 
-import {Container, Receipt, Circle, Button} from '../styles';
-import {Loader} from '../../Components/Loading';
-import {Toast} from '../../Components/Toast';
+import { Container, Receipt, Circle, Button } from "../styles";
+import { Loader } from "../../Components/Loading";
+import { Toast } from "../../Components/Toast";
 
 type PropsTransactionValueScreen = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'HomeStack'>;
-  route: RouteProp<RootStackParamList, 'Step4'>;
+  navigation: NativeStackNavigationProp<RootStackParamList, "HomeStack">;
+  route: RouteProp<RootStackParamList, "Step4">;
 };
 
 export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
@@ -22,39 +23,40 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [typeToast, setTypeToast] = useState<'SUCCESS' | 'DANGER' | 'WARNING'>(
-    'SUCCESS',
+  const [typeToast, setTypeToast] = useState<"SUCCESS" | "DANGER" | "WARNING">(
+    "SUCCESS"
   );
-  const [titleToast, setTitleToast] = useState<string>('');
-  const {item} = route.params;
+  const [titleToast, setTitleToast] = useState<string>("");
+  const { item } = route.params;
 
-  const nameIcon = item?.type === 'ENTRADA' ? 'add' : 'remove';
-  const colorIcon = item?.type === 'ENTRADA' ? '#3cb371' : '#B22222';
+  const nameIcon = item?.type === "ENTRADA" ? "add" : "remove";
+  const colorIcon = item?.type === "ENTRADA" ? "#3cb371" : "#B22222";
 
   const handleAddEditTransaction = async () => {
     setLoading(true);
     firestore()
-      .collection('transactions')
+      .collection("transactions")
       .doc(item.id)
       .update({
         description: item.description,
         price: item.price,
         type: item.type,
+        place: item.place,
         createdAt: item.createdAt,
         editedAt: firestore.FieldValue.serverTimestamp(),
         active: true,
       })
       .then(() => {
-        setTitleToast('Transação atualizada com sucesso');
-        setTypeToast('SUCCESS');
+        setTitleToast("Transação atualizada com sucesso");
+        setTypeToast("SUCCESS");
         setVisible(true);
         setTimeout(() => {
-          navigation.navigate('HomeStack');
+          navigation.navigate("HomeStack");
         }, 800);
       })
       .catch(() => {
-        setTypeToast('DANGER');
-        setTitleToast('Erro ao editar transação');
+        setTypeToast("DANGER");
+        setTitleToast("Erro ao editar transação");
         setVisible(true);
       })
       .finally(() => {
@@ -65,26 +67,27 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
   const handleAddNewTransaction = async () => {
     setLoading(true);
     firestore()
-      .collection('transactions')
+      .collection("transactions")
       .add({
         description: item.description,
         price: item.price,
         type: item.type,
+        place: item.place,
         createdAt: firestore.FieldValue.serverTimestamp(),
         editedAt: firestore.FieldValue.serverTimestamp(),
         active: true,
       })
       .then(() => {
-        setTitleToast('Transação cadastrada com sucesso');
-        setTypeToast('SUCCESS');
+        setTitleToast("Transação cadastrada com sucesso");
+        setTypeToast("SUCCESS");
         setVisible(true);
         setTimeout(() => {
-          navigation.navigate('HomeStack');
+          navigation.navigate("HomeStack");
         }, 800);
       })
       .catch(() => {
-        setTitleToast('Erro ao cadastrar transação');
-        setTypeToast('DANGER');
+        setTitleToast("Erro ao cadastrar transação");
+        setTypeToast("DANGER");
         setVisible(true);
       })
       .finally(() => {
@@ -93,7 +96,7 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
   };
 
   const handleDissmis = () => {
-    setTitleToast('');
+    setTitleToast("");
     setVisible(false);
   };
 
@@ -105,6 +108,18 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
         </Typograph>
       </Header>
       <Container>
+        <Receipt>
+          <Circle>
+            <IconF
+              name={item.place === "CASA" ? "house-user" : "hotel"}
+              size={30}
+              color="#778899"
+            />
+          </Circle>
+          <Typograph size={20} color="#778899" left={25}>
+            {item?.place}
+          </Typograph>
+        </Receipt>
         <Receipt>
           <Circle>
             <Icon size={30} name={nameIcon} color={colorIcon} />
@@ -133,9 +148,8 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
         </Receipt>
         <Button
           color={true}
-          onPress={
-            item.id ? handleAddEditTransaction : handleAddNewTransaction
-          }>
+          onPress={item.id ? handleAddEditTransaction : handleAddNewTransaction}
+        >
           <Typograph size={18} weight="bold">
             Salvar
           </Typograph>
