@@ -60,7 +60,7 @@ export const NewTransactionScreen: React.FC<PropsNewTransactionScreen> = ({
             }}
             onPress={() => setType(type === 'ENTRADA' ? '' : 'ENTRADA')}>
             <Icon name="add" size={30} color="#3cb371" />
-            <Typograph top={10} size={14} color="#3cb371" weight="700">
+            <Typograph top={10} size={18} color="#3cb371" weight="700">
               RECEITA
             </Typograph>
           </Card>
@@ -71,7 +71,7 @@ export const NewTransactionScreen: React.FC<PropsNewTransactionScreen> = ({
             }}
             onPress={() => setType(type === 'SAÍDA' ? '' : 'SAÍDA')}>
             <Icon name="remove" size={30} color="#B22222" />
-            <Typograph top={10} size={14} color="#B22222" weight="700">
+            <Typograph top={10} size={18} color="#B22222" weight="700">
               DESPESA
             </Typograph>
           </Card>

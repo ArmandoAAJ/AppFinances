@@ -54,8 +54,8 @@ export const TransactionType: React.FC<PropsTransactionDescriptionScreen> = ({
                 place === "CASA" ? "#3cb371" : "rgba(220, 220, 220, 0.3)",
             }}
           >
-            <Icon name="house-user" size={35} />
-            <Typograph weight="bold" color="#778899" size={25} top={5}>
+            <Icon name="house-user" size={30} />
+            <Typograph weight="bold" color="#778899" size={18} top={5}>
               CASA
             </Typograph>
           </Card>
@@ -66,8 +66,8 @@ export const TransactionType: React.FC<PropsTransactionDescriptionScreen> = ({
                 place === "LOJA" ? "#3cb371" : "rgba(220, 220, 220, 0.3)",
             }}
           >
-            <Icon name="hotel" size={35} />
-            <Typograph weight="bold" color="#778899" size={25} top={5}>
+            <Icon name="hotel" size={30} />
+            <Typograph weight="bold" color="#778899" size={18} top={5}>
               LOJA
             </Typograph>
           </Card>
