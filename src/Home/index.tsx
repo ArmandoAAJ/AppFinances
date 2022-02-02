@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import firestore from "@react-native-firebase/firestore";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Transactions } from "../Components/Transactions";
 import { Typograph } from "../Components/Commom";
-import { Container, Content, Header } from "./styles";
+import { Container, Header } from "./styles";
+import { HomeHeader } from "./components/Header";
 import { Pressable } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useIsFocused } from "@react-navigation/native";
@@ -11,6 +12,7 @@ import { RootStackParamList } from "../Routes/Screen";
 import ModalDialog from "../Components/ModalDialog";
 import { Toast } from "../Components/Toast";
 import { HomeModal } from "../Components/ModalDialog/Components/homeModal";
+import { useTransaction } from "../Hook/TransactionsContext";
 
 interface PropsHomeScreen {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeStack">;
@@ -28,10 +30,15 @@ export interface PropsTransaction {
 }
 
 export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
+  const {
+    loadData,
+    transactions,
+    loadTransactionsMonthHome,
+    transactionsMonthHome,
+  } = useTransaction();
   const focused = useIsFocused();
   const [visible, setVisible] = useState(false);
   const [visibleToast, setVisibleToast] = useState(false);
-  const [transactions, setTransactions] = useState<PropsTransaction[]>([]);
   const [typeToast, setTypeToast] = useState<"SUCCESS" | "DANGER" | "WARNING">(
     "SUCCESS"
   );
@@ -39,61 +46,34 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
   const [selected, setSelected] = useState<PropsTransaction>(
     {} as PropsTransaction
   );
-  const [sum, setSum] = useState(0);
+
   const handleNewTransaction = () => {
     navigation.navigate("Step", { item: {} });
   };
+
+  useEffect(() => {
+    //Carregar as trasações do mês
+    loadTransactionsMonthHome();
+  }, [transactions]);
+
+  useEffect(() => {
+    //Carregar todas as trasações
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    //Resetar o item selecionado no modal
+    if (focused) {
+      setSelected({} as PropsTransaction);
+    }
+  }, [focused]);
 
   const handleSelected = (item: PropsTransaction) => {
     setVisible(true);
     setSelected(item);
   };
 
-  useMemo(() => {
-    if (transactions.length < 1) {
-      setSum(0);
-      return;
-    }
-    const total = transactions
-      .map((i) => i)
-      .reduce((accum, curr) => {
-        if (curr.type === "ENTRADA") {
-          return (accum += curr.price);
-        } else {
-          return (accum -= curr.price);
-        }
-      }, 0);
-    setSum(total);
-  }, [transactions]);
-
-  useEffect(() => {
-    if (focused) {
-      setSelected({} as PropsTransaction);
-    }
-  }, [focused]);
-
-  useEffect(() => {
-    const subscribe = firestore()
-      .collection("transactions")
-      .orderBy("createdAt", "desc")
-      .onSnapshot((querySnapShot) => {
-        const data = querySnapShot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        }) as PropsTransaction[];
-        if (data.length < 1) {
-          return;
-        }
-        const filtered = data.filter((d) => d.active);
-        setTransactions(filtered);
-      });
-    return () => subscribe();
-  }, []);
-
   const handleEdit = () => {
-    console.log(selected);
     setVisible(false);
     navigation.navigate("Step", { item: selected });
   };
@@ -145,11 +125,7 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
             isDeleting={handleDelete}
           />
         </ModalDialog>
-        <Content style={{ backgroundColor: sum < 0 ? "#B22222" : "#3cb371" }}>
-          <Typograph size={40} weight="700">
-            R$ {sum},00
-          </Typograph>
-        </Content>
+        <HomeHeader transactions={transactions} />
         <Header>
           <Typograph size={20} color="#778899" weight="700">
             Minhas Transações
@@ -159,7 +135,7 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
           </Pressable>
         </Header>
         <Transactions
-          data={transactions}
+          data={transactionsMonthHome}
           selected={(value) => handleSelected(value)}
         />
       </Container>
