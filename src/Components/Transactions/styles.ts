@@ -1,6 +1,10 @@
-import styled from 'styled-components/native';
-import {Dimensions} from 'react-native';
-const WIDTH = Dimensions.get('window').width;
+import styled from "styled-components/native";
+import { Dimensions } from "react-native";
+const WIDTH = Dimensions.get("window").width;
+
+interface PropsCircle {
+  type: "ENTRADA" | "SAÍDA";
+}
 
 export const Card = styled.Pressable`
   width: ${WIDTH - 10}px;
@@ -10,12 +14,16 @@ export const Card = styled.Pressable`
   align-items: center;
   flex-direction: row;
   align-self: center;
+  background-color: #fff;
+  border-radius: 5px;
+  padding-horizontal: 3px;
 `;
 
-export const Circle = styled.View`
+export const Circle = styled.View<PropsCircle>`
   align-items: center;
   justify-content: center;
-  background-color: rgba(220, 220, 220, 0.3);
+  background-color: ${({ type }) =>
+    type === "ENTRADA" ? "#3cb371" : "#B22222"};
   width: 50px;
   height: 50px;
   border-radius: 25px;

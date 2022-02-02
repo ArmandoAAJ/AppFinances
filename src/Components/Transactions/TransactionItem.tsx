@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { format } from "date-fns";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import { PropsTransaction } from "../../Home";
 import { Typograph } from "../Commom";
 
@@ -16,8 +16,7 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
   item,
   selected,
 }) => {
-  const nameIcon = item.type === "ENTRADA" ? "add" : "remove";
-  const colorIcon = item.type === "ENTRADA" ? "#3cb371" : "#B22222";
+  const nameIcon = item.place ? item.place === "CASA" ? "house-user" : "hotel": 'user';
   const date =
     item && item.createdAt
       ? new Date(
@@ -26,8 +25,8 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
       : new Date();
   return (
     <Card onPress={selected}>
-      <Circle>
-        <Icon size={25} name={nameIcon} color={colorIcon} />
+      <Circle type={item.type}>
+        <Icon size={22} name={nameIcon} color="#FFF" />
       </Circle>
       <View style={{ width: "80%", marginLeft: 8 }}>
         <Typograph weight="100" color="#808080" numberOfLines={1}>
