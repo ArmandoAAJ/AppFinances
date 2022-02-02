@@ -5,7 +5,7 @@ import { PropsTransaction } from "../Home";
 import { Header } from "../Components/Header";
 import { Typograph } from "../Components/Commom";
 import { Card } from "./components/Card";
-import { SPACERITEM, WIDTHITEM } from "./styles";
+import { SPACERITEM, width, WIDTHITEM } from "./styles";
 import { Animated, FlatList, View } from "react-native";
 
 const FILTERED = [
@@ -113,7 +113,7 @@ export const Analytics: React.FC = () => {
 
   useEffect(() => {
     if (monthFiltered.length < 1) return;
-    console.log(currenIndex);
+    // console.log(currenIndex);
     const filtered = monthFiltered[currenIndex].transactions;
     setTransactionsToIndex(filtered);
   }, [currenIndex, monthFiltered]);
@@ -190,12 +190,12 @@ export const Analytics: React.FC = () => {
         snapToInterval={WIDTHITEM}
         decelerationRate={0}
         style={{ maxHeight: 210 }}
-        onMomentumScrollEnd={(event) => {
-          const index = Math.floor(
-            event.nativeEvent.contentOffset.x / WIDTHITEM
+        onMomentumScrollEnd={(e) => {
+          const newIndex = Math.round(
+            e.nativeEvent.contentOffset.x / WIDTHITEM
           );
-          if (index + 1 === currenIndex) return;
-          setCurrentIndex(index + 1);
+          if (newIndex + 1 === currenIndex) return;
+          setCurrentIndex(newIndex + 1);
         }}
       />
       <View style={{ flex: 1 }}>
