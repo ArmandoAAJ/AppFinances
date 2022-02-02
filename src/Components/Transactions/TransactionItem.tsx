@@ -18,7 +18,6 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
 }) => {
   const nameIcon = item.type === "ENTRADA" ? "add" : "remove";
   const colorIcon = item.type === "ENTRADA" ? "#3cb371" : "#B22222";
-  console.log(item);
   const date =
     item && item.createdAt
       ? new Date(
@@ -34,7 +33,7 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
         <Typograph weight="100" color="#808080" numberOfLines={1}>
           {item.description}
         </Typograph>
-        <Typograph color="rgba(128,128,128, 0.6)">R$ {item.price}</Typograph>
+        <Typograph color="rgba(128,128,128, 0.6)">R$ {item.price},00</Typograph>
       </View>
       <Typograph
         style={{ position: "absolute", bottom: 10, right: 10 }}
