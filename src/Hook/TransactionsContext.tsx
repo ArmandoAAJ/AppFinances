@@ -2,7 +2,6 @@ import React, {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import firestore from "@react-native-firebase/firestore";
@@ -18,7 +17,6 @@ export interface ITransactions {
   editedAt: Date;
   price: number;
   type: "ENTRADA" | "SAÍDA";
-  place: "CASA" | "LOJA";
   id: string;
 }
 
@@ -38,7 +36,6 @@ function TransactionProvider({ children }: PropsTransactionProvider) {
   const [transactionsMonthHome, setTransactionsMonthHome] = useState<
     ITransactions[]
   >([]);
-
 
   function loadData() {
     const subscribe = firestore()
@@ -62,9 +59,11 @@ function TransactionProvider({ children }: PropsTransactionProvider) {
   function loadTransactionsMonthHome() {
     if (transaction.length < 1) return;
     const filtered = transaction.filter((t) => {
-      const monthT = new Date(
-        t.createdAt.seconds * 1000 + t.createdAt.nanoseconds / 1000000
-      ).getMonth();
+      const monthT = t.createdAt
+        ? new Date(
+            t.createdAt.seconds * 1000 + t.createdAt.nanoseconds / 1000000
+          ).getMonth()
+        : new Date();
       const monthNew = new Date().getMonth();
       if (monthT === monthNew) {
         return t;
