@@ -48,7 +48,7 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
   );
 
   const handleNewTransaction = () => {
-    navigation.navigate("Step", { item: {} });
+    navigation.navigate("Step1", { item: {} });
   };
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
 
   const handleEdit = () => {
     setVisible(false);
-    navigation.navigate("Step", { item: selected });
+    navigation.navigate("Step1", { item: selected });
   };
 
   const handleDelete = () => {
