@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { format } from "date-fns";
-import Icon from "react-native-vector-icons/FontAwesome5";
+import Icon from "react-native-vector-icons/Ionicons";
 import { PropsTransaction } from "../../Home";
 import { Typograph } from "../Commom";
 
@@ -16,7 +16,7 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
   item,
   selected,
 }) => {
-  const nameIcon = item.place ? item.place === "CASA" ? "house-user" : "hotel": 'user';
+  const nameIcon = item.type ? item.type === "ENTRADA" ? "add" : "remove": 'user';
   const date =
     item && item.createdAt
       ? new Date(
