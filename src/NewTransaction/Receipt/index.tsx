@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
-import IconF from "react-native-vector-icons/FontAwesome5";
 import { Typograph } from "../../Components/Commom";
 import { Header } from "../../Components/Header";
 import { RouteProp } from "@react-navigation/native";
@@ -41,7 +40,6 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
         description: item.description,
         price: item.price,
         type: item.type,
-        place: item.place,
         createdAt: item.createdAt,
         editedAt: firestore.FieldValue.serverTimestamp(),
         active: true,
@@ -72,7 +70,6 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
         description: item.description,
         price: item.price,
         type: item.type,
-        place: item.place,
         createdAt: firestore.FieldValue.serverTimestamp(),
         editedAt: firestore.FieldValue.serverTimestamp(),
         active: true,
@@ -108,18 +105,6 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
         </Typograph>
       </Header>
       <Container>
-        <Receipt>
-          <Circle>
-            <IconF
-              name={item.place === "CASA" ? "house-user" : "hotel"}
-              size={30}
-              color="#778899"
-            />
-          </Circle>
-          <Typograph size={20} color="#778899" left={25}>
-            {item?.place}
-          </Typograph>
-        </Receipt>
         <Receipt>
           <Circle>
             <Icon size={30} name={nameIcon} color={colorIcon} />
