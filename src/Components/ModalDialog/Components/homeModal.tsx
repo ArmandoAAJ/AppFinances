@@ -5,7 +5,6 @@ import { Typograph } from "../../Commom";
 import { Button, Container } from "../styles";
 import { Circle } from "../../Transactions/styles";
 import Icon from "react-native-vector-icons/Ionicons";
-import IconF from "react-native-vector-icons/FontAwesome5";
 
 // import { Container } from './styles';
 interface PropsHomeModal {
@@ -19,7 +18,11 @@ export const HomeModal: React.FC<PropsHomeModal> = ({
   isDeleting,
   isEdditing,
 }) => {
-  const nameIcon = item.place === "CASA" ? "house-user" : "hotel";
+  const nameIcon = item.type
+    ? item.type === "ENTRADA"
+      ? "add"
+      : "remove"
+    : "user";
   return (
     <Container>
       <Typograph
@@ -31,7 +34,7 @@ export const HomeModal: React.FC<PropsHomeModal> = ({
       </Typograph>
       <View style={{ flexDirection: "row", marginTop: 30 }}>
         <Circle type={item.type}>
-          <IconF size={22} name={nameIcon} color="#FFF" />
+          <Icon size={22} name={nameIcon} color="#FFF" />
         </Circle>
         <View style={{ width: "80%", marginLeft: 8 }}>
           <Typograph weight="100" color="#808080" numberOfLines={1}>
