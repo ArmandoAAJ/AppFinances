@@ -36,7 +36,9 @@ export const HomeModal: React.FC<PropsHomeModal> = ({
           <Typograph weight="100" color="#808080" numberOfLines={1}>
             {item.description}
           </Typograph>
-          <Typograph color="rgba(128,128,128, 0.6)">R$ {item.price}</Typograph>
+          <Typograph color="rgba(128,128,128, 0.6)">
+            R$ {item.price},00
+          </Typograph>
         </View>
         <Typograph
           style={{ position: "absolute", bottom: 10, right: 10 }}

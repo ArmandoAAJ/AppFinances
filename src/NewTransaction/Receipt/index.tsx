@@ -107,7 +107,7 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
             </Typograph>
           </Circle>
           <Typograph size={20} color="#778899" left={25}>
-            {item?.price}
+            {item?.price},00
           </Typograph>
         </Receipt>
         <Button
