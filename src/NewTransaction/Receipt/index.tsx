@@ -10,6 +10,7 @@ import firestore from "@react-native-firebase/firestore";
 import { Container, Receipt, Circle, Button } from "../styles";
 import { Loader } from "../../Components/Loading";
 import { Toast } from "../../Components/Toast";
+import { useTransaction } from "../../Hook/TransactionsContext";
 
 type PropsTransactionValueScreen = {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeStack">;
@@ -20,6 +21,7 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
   route,
   navigation,
 }) => {
+  const { handleNewTransaction, handleUpdateTransaction } = useTransaction();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [typeToast, setTypeToast] = useState<"SUCCESS" | "DANGER" | "WARNING">(
@@ -33,63 +35,40 @@ export const ReceiptScreen: React.FC<PropsTransactionValueScreen> = ({
 
   const handleAddEditTransaction = async () => {
     setLoading(true);
-    firestore()
-      .collection("transactions")
-      .doc(item.id)
-      .update({
-        description: item.description,
-        price: item.price,
-        type: item.type,
-        createdAt: item.createdAt,
-        editedAt: firestore.FieldValue.serverTimestamp(),
-        active: true,
-      })
-      .then(() => {
-        setTitleToast("Transação atualizada com sucesso");
-        setTypeToast("SUCCESS");
-        setVisible(true);
-        setTimeout(() => {
-          navigation.navigate("HomeStack");
-        }, 800);
-      })
-      .catch(() => {
-        setTypeToast("DANGER");
-        setTitleToast("Erro ao editar transação");
-        setVisible(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      await handleUpdateTransaction(item);
+      setTitleToast("Transação atualizada com sucesso");
+      setTypeToast("SUCCESS");
+      setVisible(true);
+      setTimeout(() => {
+        navigation.navigate("HomeStack");
+      }, 800);
+    } catch (error) {
+      setTypeToast("DANGER");
+      setTitleToast("Erro ao editar transação");
+      setVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAddNewTransaction = async () => {
     setLoading(true);
-    firestore()
-      .collection("transactions")
-      .add({
-        description: item.description,
-        price: item.price,
-        type: item.type,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        editedAt: firestore.FieldValue.serverTimestamp(),
-        active: true,
-      })
-      .then(() => {
-        setTitleToast("Transação cadastrada com sucesso");
-        setTypeToast("SUCCESS");
-        setVisible(true);
-        setTimeout(() => {
-          navigation.navigate("HomeStack");
-        }, 800);
-      })
-      .catch(() => {
-        setTitleToast("Erro ao cadastrar transação");
-        setTypeToast("DANGER");
-        setVisible(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      await handleNewTransaction(item);
+      setTitleToast("Transação cadastrada com sucesso");
+      setTypeToast("SUCCESS");
+      setVisible(true);
+      setTimeout(() => {
+        navigation.navigate("HomeStack");
+      }, 800);
+    } catch (error) {
+      setTitleToast("Erro ao cadastrar transação");
+      setTypeToast("DANGER");
+      setVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDissmis = () => {

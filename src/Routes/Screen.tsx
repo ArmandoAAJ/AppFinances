@@ -9,7 +9,6 @@ import { TransactionType } from "../NewTransaction/TransactionType";
 
 export interface PropsItem {
   active?: boolean;
-  place?: "CASA" | "LOJA";
   createdAt?: { nanoseconds: number; seconds: number };
   description?: string;
   editedAt?: Date;

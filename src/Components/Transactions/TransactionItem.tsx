@@ -16,9 +16,9 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
   item,
   selected,
 }) => {
-  const nameIcon = item.type ? item.type === "ENTRADA" ? "add" : "remove": 'user';
+  const nameIcon = item.type === "ENTRADA" ? "add" : "remove";
   const date =
-    item && item.createdAt
+    item && item.createdAt && item.createdAt.seconds
       ? new Date(
           item.createdAt.seconds * 1000 + item.createdAt.nanoseconds / 1000000
         )

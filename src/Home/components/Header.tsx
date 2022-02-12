@@ -17,6 +17,8 @@ export const HomeHeader: React.FC<PropsHomeHeader> = ({ transactions }) => {
   const [negative, setNegative] = useState(0);
 
   const totals = useMemo(() => {
+    setPositive(0);
+    setNegative(0);
     const sum = transactions
       .map((i) => i)
       .reduce((accum, curr) => {

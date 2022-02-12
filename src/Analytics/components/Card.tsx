@@ -1,12 +1,13 @@
 import React from "react";
+import { View } from "react-native";
 import { Typograph } from "../../Components/Commom";
-import { PropsTransaction } from "../../Home";
+import { ITransactions } from "../../Hook/TransactionsContext";
 
-import { Card as CardStyled, Header } from "../styles";
+import { Card as CardStyled, Header, WIDTHITEM } from "../styles";
 import { ContentCard } from "./ContentCard";
 
 interface PropsCard {
-  item?: (PropsTransaction | undefined)[];
+  item: ITransactions[];
   total?: number;
   positive?: number;
   negative?: number;
@@ -47,23 +48,25 @@ export const Card: React.FC<PropsCard> = ({
     new Date();
   const monthNumber = new Date(DATE).getMonth();
   return (
-    <CardStyled
-      style={{
-        transform: [{ scaleY }],
-        opacity: opacityCard,
-      }}
-    >
-      <Header>
-        <Typograph weight="800">
-          {monthNames[monthNumber] + " - " + new Date(DATE).getFullYear()}
-        </Typograph>
-      </Header>
-      <ContentCard
-        opacity={opacity}
-        total={total}
-        positive={positive}
-        negative={negative}
-      />
-    </CardStyled>
+    <View style={{ width: WIDTHITEM }}>
+      <CardStyled
+        style={{
+          transform: [{ scaleY }],
+          opacity: opacityCard,
+        }}
+      >
+        <Header>
+          <Typograph weight="800">
+            {monthNames[monthNumber] + " - " + new Date(DATE).getFullYear()}
+          </Typograph>
+        </Header>
+        <ContentCard
+          opacity={opacity}
+          total={total}
+          positive={positive}
+          negative={negative}
+        />
+      </CardStyled>
+    </View>
   );
 };

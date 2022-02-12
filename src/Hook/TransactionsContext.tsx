@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-} from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 
 interface PropsTransactionProvider {
@@ -11,13 +6,13 @@ interface PropsTransactionProvider {
 }
 
 export interface ITransactions {
-  active: boolean;
-  createdAt: { nanoseconds: number; seconds: number };
-  description: string;
-  editedAt: Date;
-  price: number;
-  type: "ENTRADA" | "SAÍDA";
-  id: string;
+  active?: boolean;
+  createdAt?: { nanoseconds: number; seconds: number };
+  description?: string;
+  editedAt?: Date;
+  price?: number;
+  type?: "ENTRADA" | "SAÍDA";
+  id?: string;
 }
 
 interface ITransactionContextData {
@@ -25,6 +20,9 @@ interface ITransactionContextData {
   loadTransactionsMonthHome: () => void;
   transactions: ITransactions[];
   transactionsMonthHome: ITransactions[];
+  handleNewTransaction(item: ITransactions): Promise<void>;
+  handleUpdateTransaction(item: ITransactions): Promise<void>;
+  handleDeleteTransaction(item: ITransactions): Promise<void>;
 }
 
 export const TransactionContext = createContext<ITransactionContextData>(
@@ -75,6 +73,51 @@ function TransactionProvider({ children }: PropsTransactionProvider) {
     }
   }
 
+  async function handleNewTransaction(item: ITransactions) {
+    try {
+      await firestore().collection("transactions").add({
+        description: item.description,
+        price: item.price,
+        type: item.type,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        editedAt: firestore.FieldValue.serverTimestamp(),
+        active: true,
+      });
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+
+  async function handleUpdateTransaction(item: ITransactions) {
+    try {
+      await firestore().collection("transactions").doc(item.id).update({
+        description: item.description,
+        price: item.price,
+        type: item.type,
+        createdAt: item.createdAt,
+        editedAt: firestore.FieldValue.serverTimestamp(),
+        active: true,
+      });
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+
+  async function handleDeleteTransaction(item: ITransactions) {
+    try {
+      await firestore().collection("transactions").doc(item.id).update({
+        description: item.description,
+        price: item.price,
+        type: item.type,
+        createdAt: item.createdAt,
+        editedAt: firestore.FieldValue.serverTimestamp(),
+        active: false,
+      });
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  }
+
   return (
     <TransactionContext.Provider
       value={{
@@ -82,6 +125,9 @@ function TransactionProvider({ children }: PropsTransactionProvider) {
         transactions: transaction,
         loadTransactionsMonthHome,
         transactionsMonthHome,
+        handleNewTransaction,
+        handleUpdateTransaction,
+        handleDeleteTransaction,
       }}
     >
       {children}

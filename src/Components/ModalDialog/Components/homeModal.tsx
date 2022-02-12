@@ -1,14 +1,14 @@
 import React from "react";
 import { View } from "react-native";
-import { PropsTransaction } from "../../../Home";
 import { Typograph } from "../../Commom";
 import { Button, Container } from "../styles";
 import { Circle } from "../../Transactions/styles";
 import Icon from "react-native-vector-icons/Ionicons";
+import { ITransactions } from "../../../Hook/TransactionsContext";
 
 // import { Container } from './styles';
 interface PropsHomeModal {
-  item: PropsTransaction;
+  item: ITransactions;
   isEdditing: () => void;
   isDeleting: () => void;
 }
@@ -18,11 +18,7 @@ export const HomeModal: React.FC<PropsHomeModal> = ({
   isDeleting,
   isEdditing,
 }) => {
-  const nameIcon = item.type
-    ? item.type === "ENTRADA"
-      ? "add"
-      : "remove"
-    : "user";
+  const nameIcon = item.type === "ENTRADA" ? "add" : "remove";
   return (
     <Container>
       <Typograph

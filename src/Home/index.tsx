@@ -12,21 +12,10 @@ import { RootStackParamList } from "../Routes/Screen";
 import ModalDialog from "../Components/ModalDialog";
 import { Toast } from "../Components/Toast";
 import { HomeModal } from "../Components/ModalDialog/Components/homeModal";
-import { useTransaction } from "../Hook/TransactionsContext";
+import { ITransactions, useTransaction } from "../Hook/TransactionsContext";
 
 interface PropsHomeScreen {
   navigation: NativeStackNavigationProp<RootStackParamList, "HomeStack">;
-}
-
-export interface PropsTransaction {
-  active: boolean;
-  createdAt: { nanoseconds: number; seconds: number };
-  description: string;
-  editedAt: Date;
-  price: number;
-  type: "ENTRADA" | "SAÍDA";
-  place: "CASA" | "LOJA";
-  id: string;
 }
 
 export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
@@ -35,6 +24,7 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
     transactions,
     loadTransactionsMonthHome,
     transactionsMonthHome,
+    handleDeleteTransaction,
   } = useTransaction();
   const focused = useIsFocused();
   const [visible, setVisible] = useState(false);
@@ -43,9 +33,7 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
     "SUCCESS"
   );
   const [titleToast, setTitleToast] = useState<string>("");
-  const [selected, setSelected] = useState<PropsTransaction>(
-    {} as PropsTransaction
-  );
+  const [selected, setSelected] = useState<ITransactions>({} as ITransactions);
 
   const handleNewTransaction = () => {
     navigation.navigate("Step1", { item: {} });
@@ -64,11 +52,11 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
   useEffect(() => {
     //Resetar o item selecionado no modal
     if (focused) {
-      setSelected({} as PropsTransaction);
+      setSelected({} as ITransactions);
     }
   }, [focused]);
 
-  const handleSelected = (item: PropsTransaction) => {
+  const handleSelected = (item: ITransactions) => {
     setVisible(true);
     setSelected(item);
   };
@@ -78,30 +66,18 @@ export const HomeScreen: React.FC<PropsHomeScreen> = ({ navigation }) => {
     navigation.navigate("Step1", { item: selected });
   };
 
-  const handleDelete = () => {
-    firestore()
-      .collection("transactions")
-      .doc(selected.id)
-      .update({
-        description: selected.description,
-        price: selected.price,
-        type: selected.type,
-        place: selected.place,
-        createdAt: selected.createdAt,
-        editedAt: firestore.FieldValue.serverTimestamp(),
-        active: false,
-      })
-      .then(() => {
-        setTypeToast("SUCCESS");
-        setTitleToast("Transação removida com sucesso");
-        setVisibleToast(true);
-        setVisible(false);
-      })
-      .catch(() => {
-        setTypeToast("DANGER");
-        setTitleToast("Erro ao remover a transação");
-        setVisibleToast(false);
-      });
+  const handleDelete = async () => {
+    try {
+      await handleDeleteTransaction(selected);
+      setTypeToast("SUCCESS");
+      setTitleToast("Transação removida com sucesso");
+      setVisibleToast(true);
+      setVisible(false);
+    } catch (error) {
+      setTypeToast("DANGER");
+      setTitleToast("Erro ao remover a transação");
+      setVisibleToast(false);
+    }
   };
 
   const handleDissmis = () => {

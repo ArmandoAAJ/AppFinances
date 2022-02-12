@@ -1,13 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import firestore from "@react-native-firebase/firestore";
-import { TransactionsItem } from "../Components/Transactions/TransactionItem";
-import { PropsTransaction } from "../Home";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Header } from "../Components/Header";
 import { Typograph } from "../Components/Commom";
 import { Card } from "./components/Card";
-import { SPACERITEM, width, WIDTHITEM } from "./styles";
+import { SPACERITEM, WIDTHITEM } from "./styles";
 import { Animated, FlatList, View } from "react-native";
-
+import { ITransactions, useTransaction } from "../Hook/TransactionsContext";
+import { TransactionsItem } from "../Components/Transactions/TransactionItem";
 const FILTERED = [
   {
     initial: new Date("2022-01-01T03:00:00"),
@@ -28,28 +26,34 @@ const FILTERED = [
 ];
 
 interface PropsMonth {
-  transactions?: (PropsTransaction | undefined)[];
-  total?: number;
-  positive?: number;
-  negative?: number;
-  key?: "left" | "right";
+  transactions: ITransactions[] | undefined;
+  total: number;
+  positive: number;
+  negative: number;
 }
 
 export const Analytics: React.FC = () => {
-  const [transactions, setTransactions] = useState<PropsTransaction[]>([]);
-  const [monthFiltered, setMonthFiltered] = useState<PropsMonth[] | []>([]);
+  const { loadData, transactions } = useTransaction();
+  const flatListRef = useRef<FlatList>(null);
+  const flatListTransaction = useRef<FlatList>(null);
+  const [monthFiltered, setMonthFiltered] = useState([] as any);
   const scrollX = useRef(new Animated.Value(0)).current;
-  const [currenIndex, setCurrentIndex] = useState(0);
   const [transactionsToIndex, setTransactionsToIndex] = useState<
-    PropsTransaction[]
+    ITransactions[]
   >([]);
+  const [currentIndex, setCurrentIndex] = useState<ITransactions[]>([]);
+  useEffect(() => {
+    //Carregar todas as trasações
+    loadData();
+  }, []);
 
   useEffect(() => {
     if (transactions.length < 1) return;
-    let arr = [] as PropsMonth[];
+    const auxT = [];
     for (var i = 0; i < FILTERED.length; i++) {
       const x = transactions
         .map((t) => {
+          if (!t.createdAt) return;
           if (
             new Date(
               t.createdAt.seconds * 1000 + t.createdAt.nanoseconds / 1000000
@@ -65,10 +69,10 @@ export const Analytics: React.FC = () => {
       const total = x
         .map((i) => i)
         .reduce((accum, curr) => {
-          if (curr && curr.type === "ENTRADA") {
+          if (curr && curr.price && curr.type === "ENTRADA") {
             return (accum += curr.price);
           }
-          if (curr && curr.type === "SAÍDA") {
+          if (curr && curr.price && curr.type === "SAÍDA") {
             return (accum -= curr.price);
           }
           return accum;
@@ -80,43 +84,40 @@ export const Analytics: React.FC = () => {
         .filter((i) => i?.type === "SAÍDA")
         .reduce((accum, curr) => (accum += curr?.price || 0), 0);
       if (x.length > 0) {
-        arr.push({ transactions: x, total, positive, negative });
+        auxT.push({
+          transactions: x,
+          total,
+          positive,
+          negative,
+        });
       }
     }
-    if (arr.length > 0) {
-      arr.splice(0, 0, { key: "left" });
-      arr.splice(arr.length, 0, { key: "right" });
-      setMonthFiltered(arr);
-      setCurrentIndex(1);
-    }
+    setMonthFiltered(auxT);
+    console.log(auxT.length);
+    setTimeout(() => {
+      flatListRef.current?.scrollToOffset({
+        animated: true,
+        offset: auxT.length * WIDTHITEM - WIDTHITEM,
+      });
+    }, 700);
   }, [transactions]);
 
   useEffect(() => {
-    const subscribe = firestore()
-      .collection("transactions")
-      .orderBy("createdAt", "desc")
-      .onSnapshot((querySnapShot) => {
-        const data = querySnapShot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        }) as PropsTransaction[];
-        if (data.length < 1) {
-          return;
-        }
-        const filtered = data.filter((d) => d.active);
-        setTransactions(filtered);
-      });
-    return () => subscribe();
-  }, []);
+    if (
+      transactionsToIndex.length > 0 &&
+      currentIndex.length > 0 &&
+      currentIndex[0].id === transactionsToIndex[0].id
+    )
+      return;
+    flatListTransaction.current?.scrollToOffset({ animated: true, offset: 0 });
+    setTransactionsToIndex(currentIndex);
+  }, [currentIndex]);
 
-  useEffect(() => {
-    if (monthFiltered.length < 1) return;
-    // console.log(currenIndex);
-    const filtered = monthFiltered[currenIndex].transactions;
-    setTransactionsToIndex(filtered);
-  }, [currenIndex, monthFiltered]);
+  const handlex = useCallback(({ changed }) => {
+    if (changed.length < 1) return;
+    const x = changed[0];
+    setCurrentIndex(x.item.transactions);
+  }, []);
 
   return (
     <>
@@ -126,22 +127,13 @@ export const Analytics: React.FC = () => {
         </Typograph>
       </Header>
       <Animated.FlatList
+        ref={flatListRef}
         data={monthFiltered}
         renderItem={({ item, index }) => {
-          if (item.key) {
-            return (
-              <View
-                style={{
-                  width: SPACERITEM,
-                  height: 210,
-                }}
-              />
-            );
-          }
           const INPUTRANGE = [
-            (index - 2) * WIDTHITEM,
             (index - 1) * WIDTHITEM,
             index * WIDTHITEM,
+            (index + 1) * WIDTHITEM,
           ];
           const scaleY = scrollX.interpolate({
             inputRange: INPUTRANGE,
@@ -149,30 +141,36 @@ export const Analytics: React.FC = () => {
           });
           const opacity = scrollX.interpolate({
             inputRange: [
-              (index - 2) * WIDTHITEM,
               (index - 1) * WIDTHITEM,
               index * WIDTHITEM,
+              (index + 1) * WIDTHITEM,
             ],
             outputRange: [0, 1, 0],
           });
           const opacityCard = scrollX.interpolate({
             inputRange: [
-              (index - 2) * WIDTHITEM,
               (index - 1) * WIDTHITEM,
               index * WIDTHITEM,
+              (index + 1) * WIDTHITEM,
             ],
             outputRange: [0.5, 1, 0.5],
           });
           return (
-            <Card
-              scaleY={scaleY}
-              opacity={opacity}
-              opacityCard={opacityCard}
-              item={item && item.transactions}
-              total={item.total}
-              positive={item.positive}
-              negative={item.negative}
-            />
+            <>
+              {index === 0 && <View style={{ width: SPACERITEM + 5 }} />}
+              <Card
+                scaleY={scaleY}
+                opacity={opacity}
+                opacityCard={opacityCard}
+                item={item && item.transactions}
+                total={item.total}
+                positive={item.positive}
+                negative={item.negative}
+              />
+              {index === monthFiltered.length - 1 && (
+                <View style={{ width: SPACERITEM - 5 }} />
+              )}
+            </>
           );
         }}
         onScroll={Animated.event(
@@ -180,6 +178,11 @@ export const Analytics: React.FC = () => {
           { useNativeDriver: true }
         )}
         scrollEventThrottle={16}
+        getItemLayout={(_, index) => ({
+          length: WIDTHITEM,
+          offset: WIDTHITEM * index,
+          index,
+        })}
         keyExtractor={(_, index) => String(index)}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -187,28 +190,26 @@ export const Analytics: React.FC = () => {
         contentContainerStyle={{
           marginVertical: 5,
         }}
+        onViewableItemsChanged={handlex}
+        viewabilityConfig={{
+          viewAreaCoveragePercentThreshold: 95,
+        }}
         snapToInterval={WIDTHITEM}
         decelerationRate={0}
         style={{ maxHeight: 210 }}
-        onMomentumScrollEnd={(e) => {
-          const newIndex = Math.round(
-            e.nativeEvent.contentOffset.x / WIDTHITEM
-          );
-          if (newIndex + 1 === currenIndex) return;
-          setCurrentIndex(newIndex + 1);
-        }}
       />
-      <View style={{ flex: 1 }}>
+      <Animated.View style={{ flex: 1 }}>
         <FlatList
           data={transactionsToIndex}
-          keyExtractor={(item) => item.id}
+          ref={flatListTransaction}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => (
             <TransactionsItem selected={() => {}} item={item} />
           )}
           contentContainerStyle={{ paddingBottom: 60 }}
           showsVerticalScrollIndicator={false}
         />
-      </View>
+      </Animated.View>
     </>
   );
 };

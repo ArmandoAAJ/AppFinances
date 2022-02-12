@@ -10,7 +10,7 @@ export const Content = styled(Animated.View)`
 `;
 
 export const Card = styled(Animated.View)`
-  width: ${WIDTHITEM}px;
+  width: ${WIDTHITEM - 10}px;
   height: 200px;
   background-color: #f9f8f8f7;
 `;
