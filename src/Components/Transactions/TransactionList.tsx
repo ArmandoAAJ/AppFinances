@@ -1,24 +1,24 @@
 import React from "react";
 import { FlatList } from "react-native";
-import { PropsTransaction } from "../../Home";
+import { ITransactions } from "../../Hook/TransactionsContext";
 import { TransactionsItem } from "./TransactionItem";
 
 interface PropsTransactionsList {
-  data: PropsTransaction[];
-  selected: (item: PropsTransaction) => void;
+  data: ITransactions[];
+  selected: (item: ITransactions) => void;
 }
 
 export const TransactionsList: React.FC<PropsTransactionsList> = ({
   data,
   selected,
 }) => {
-  const handleSelectedItem = (item: PropsTransaction) => {
+  const handleSelectedItem = (item: ITransactions) => {
     selected(item);
   };
   return (
     <FlatList
       data={data}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item, index) => item.id || String(index)}
       renderItem={({ item, index }) => {
         return (
           <TransactionsItem
@@ -28,6 +28,7 @@ export const TransactionsList: React.FC<PropsTransactionsList> = ({
         );
       }}
       contentContainerStyle={{ paddingBottom: 70 }}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

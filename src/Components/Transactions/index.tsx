@@ -1,16 +1,17 @@
-import React from 'react';
-import {TransactionsList} from './TransactionList';
-import {PropsTransaction} from '../../Home';
+import React from "react";
+import { ITransactions } from "../../Hook/TransactionsContext";
+import { TransactionsList } from "./TransactionList";
+
 // import { Container } from './styles';
 
 interface PropsTransactionsParams {
-  data: PropsTransaction[];
-  selected: (item: PropsTransaction) => void;
+  data: ITransactions[];
+  selected: (item: ITransactions) => void;
 }
 
 export const Transactions: React.FC<PropsTransactionsParams> = ({
   data,
   selected,
 }) => {
-  return <TransactionsList data={data} selected={item => selected(item)} />;
+  return <TransactionsList data={data} selected={(item) => selected(item)} />;
 };

@@ -23,11 +23,11 @@ export const HomeHeader: React.FC<PropsHomeHeader> = ({ transactions }) => {
       .map((i) => i)
       .reduce((accum, curr) => {
         if (curr.type === "ENTRADA") {
-          setPositive((oldValue) => oldValue + curr.price);
-          return (accum += curr.price);
+          setPositive((oldValue) => oldValue + (curr.price || 0));
+          return (accum += curr.price || 0);
         } else {
-          setNegative((oldValue) => oldValue + curr.price);
-          return (accum -= curr.price);
+          setNegative((oldValue) => oldValue + (curr.price || 0));
+          return (accum -= curr.price || 0);
         }
       }, 0);
     return sum;
@@ -37,7 +37,10 @@ export const HomeHeader: React.FC<PropsHomeHeader> = ({ transactions }) => {
     <Content>
       <View>
         <Typograph size={30} weight="700">
-          R$ {totals},00
+          {Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }).format(totals)}
         </Typograph>
       </View>
       <View
@@ -52,7 +55,10 @@ export const HomeHeader: React.FC<PropsHomeHeader> = ({ transactions }) => {
             <Icon name="add" size={30} color="#3cb371" />
           </Circle>
           <Typograph top={5} size={20} weight="700">
-            R$ {positive},00
+            {Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(positive)}
           </Typograph>
         </View>
         <View style={{ alignItems: "center" }}>
@@ -60,7 +66,10 @@ export const HomeHeader: React.FC<PropsHomeHeader> = ({ transactions }) => {
             <Icon name="remove" size={30} color="#B22222" />
           </Circle>
           <Typograph top={5} size={20} weight="700">
-            R$ {negative},00
+            {Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(negative)}
           </Typograph>
         </View>
       </View>

@@ -2,13 +2,13 @@ import React from "react";
 import { View } from "react-native";
 import { format } from "date-fns";
 import Icon from "react-native-vector-icons/Ionicons";
-import { PropsTransaction } from "../../Home";
+import { ITransactions } from "../../Hook/TransactionsContext";
 import { Typograph } from "../Commom";
 
 import { Card, Circle } from "./styles";
 
 interface TransactionCard {
-  item: PropsTransaction;
+  item: ITransactions;
   selected: () => void;
 }
 
@@ -32,7 +32,12 @@ export const TransactionsItem: React.FC<TransactionCard> = ({
         <Typograph weight="100" color="#808080" numberOfLines={1}>
           {item.description}
         </Typograph>
-        <Typograph color="rgba(128,128,128, 0.6)">R$ {item.price},00</Typograph>
+        <Typograph color="rgba(128,128,128, 0.6)">
+          {Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }).format(item.price || 0)}
+        </Typograph>
       </View>
       <Typograph
         style={{ position: "absolute", bottom: 10, right: 10 }}

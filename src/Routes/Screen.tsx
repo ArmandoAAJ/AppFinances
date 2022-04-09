@@ -15,6 +15,7 @@ export interface PropsItem {
   price?: number;
   type?: "ENTRADA" | "SAÍDA";
   id?: string;
+  place?: "CASA" | "LOJA";
 }
 
 export type RootStackParamList = {

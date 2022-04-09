@@ -27,7 +27,10 @@ export const ContentCard: React.FC<PorpsContentCard> = ({
         color="#999"
         style={{ alignSelf: "center" }}
       >
-        R$ {total},00
+        {Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(total || 0)}
       </Typograph>
       <Border borderB />
       <View
@@ -41,7 +44,10 @@ export const ContentCard: React.FC<PorpsContentCard> = ({
             <Icon size={25} name="add" color="#3cb371" />
           </Circle>
           <Typograph weight="700" color="#999" top={10}>
-            R$ {positive},00
+            {Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(positive || 0)}
           </Typograph>
         </CardType>
         <Border borderL />
@@ -50,7 +56,10 @@ export const ContentCard: React.FC<PorpsContentCard> = ({
             <Icon size={25} name="remove" color="#B22222" />
           </Circle>
           <Typograph weight="700" color="#999" top={10}>
-            R$ {negative},00
+            {Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(negative || 0)}
           </Typograph>
         </CardType>
       </View>

@@ -22,7 +22,7 @@ export const TransactionType: React.FC<PropsTransactionDescriptionScreen> = ({
   const [place, setPlace] = useState<"CASA" | "LOJA" | "">("");
 
   useEffect(() => {
-    if (item?.place) {
+    if (item && item.place) {
       setPlace(item?.place);
     }
   }, [item]);

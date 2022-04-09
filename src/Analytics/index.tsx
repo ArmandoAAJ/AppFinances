@@ -23,6 +23,10 @@ const FILTERED = [
     initial: new Date("2022-04-01T03:00:00"),
     final: new Date("2022-04-30T03:00:00"),
   },
+  {
+    initial: new Date("2022-05-01T03:00:00"),
+    final: new Date("2022-05-31T03:00:00"),
+  },
 ];
 
 interface PropsMonth {

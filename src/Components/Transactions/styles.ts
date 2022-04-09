@@ -3,7 +3,7 @@ import { Dimensions } from "react-native";
 const WIDTH = Dimensions.get("window").width;
 
 interface PropsCircle {
-  type: "ENTRADA" | "SAÍDA";
+  type?: "ENTRADA" | "SAÍDA";
 }
 
 export const Card = styled.Pressable`
